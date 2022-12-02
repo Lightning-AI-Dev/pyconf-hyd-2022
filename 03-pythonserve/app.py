@@ -33,4 +33,4 @@ class SDServe(PythonServer):
         return {"image": self.serialize(self._model(request.prompt))}
 
 
-app = L.LightningApp(SDServe())
+app = L.LightningApp(SDServe(cloud_compute=L.CloudCompute("gpu-fast", disk_size=30)))
