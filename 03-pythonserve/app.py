@@ -1,16 +1,28 @@
-# !pip install git+https://github.com/Lightning-AI/lightning-diffusion-component.git
+# !pip install "sd_inference@git+https://github.com/aniketmaurya/stable_diffusion_inference@main"
+# !pip install -e git+https://github.com/CompVis/taming-transformers.git@master#egg=taming-transformers -q
+# !pip install -U "clip@ git+https://github.com/openai/CLIP.git@main" -q
+
 import lightning as L
-from lightning_diffusion import BaseDiffusion
-from stable_diffusion_inference import create_text2image
+from lightning.app.components.serve import Image, PythonServer
+from pydantic import BaseModel
 
 
-class ServeDiffusion(BaseDiffusion):
-    def setup(self, *args, **kwargs):
-        self.model = create_text2image()
-
-    def predict(self, data):
-        out = self.model(prompt=data.prompt, num_inference_steps=23)
-        return {"image": self.serialize(out[0][0])}
+class Prompt(BaseModel):
+    prompt: str
 
 
-app = L.LightningApp(ServeDiffusion())
+class SDServe(PythonServer):
+    def __init__(self, sd_variant="sd1", **kwargs):
+        super().__init__(input_type=Prompt, output_type=Image, **kwargs)
+        self.sd_variant = sd_variant
+
+    def setup(self, *args, **kwargs) -> None:
+        from stable_diffusion_inference import create_text2image
+
+        self._model = create_text2image(self.sd_variant)
+
+    def predict(self, request: Prompt):
+        return {"image": self._model(request.prompt)}
+
+
+app = L.LightningApp(SDServe())

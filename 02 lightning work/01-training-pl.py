@@ -1,7 +1,8 @@
 # app.py
 import lightning as L
-from lightning.app.components import LightningTrainerMultiNode
 import mnist_lit_model as mnist_utils
+from lightning.app.components import LightningTrainerMultiNode
+
 
 class LightningTrainerDistributed(L.LightningWork):
     def run(self):
@@ -9,6 +10,7 @@ class LightningTrainerDistributed(L.LightningWork):
         datamodule = mnist_utils.MyDataModule()
         trainer = L.Trainer(max_epochs=10, strategy="ddp")
         trainer.fit(model, datamodule=datamodule)
+
 
 # 8 GPU: (2 nodes of 4 x v100)
 component = LightningTrainerMultiNode(

@@ -1,13 +1,12 @@
 from os import path
 from typing import Optional
 
+import lightning as L
 import torch
-from torch.nn import functional as F
-from torch.utils.data import DataLoader, random_split
-
 from lightning.pytorch import LightningDataModule, LightningModule
 from lightning.pytorch.demos.mnist_datamodule import MNIST
-import lightning as L
+from torch.nn import functional as F
+from torch.utils.data import DataLoader, random_split
 from torchvision import transforms
 
 DATASETS_PATH = path.join("../", "Datasets")
@@ -42,7 +41,9 @@ class LitClassifier(LightningModule):
     )
     """
 
-    def __init__(self, backbone: Optional[Backbone] = None, learning_rate: float = 0.0001):
+    def __init__(
+        self, backbone: Optional[Backbone] = None, learning_rate: float = 0.0001
+    ):
         super().__init__()
         self.save_hyperparameters(ignore=["backbone"])
         if backbone is None:
@@ -85,8 +86,12 @@ class LitClassifier(LightningModule):
 class MyDataModule(LightningDataModule):
     def __init__(self, batch_size: int = 32):
         super().__init__()
-        dataset = MNIST(DATASETS_PATH, train=True, download=True, transform=transforms.ToTensor())
-        self.mnist_test = MNIST(DATASETS_PATH, train=False, download=True, transform=transforms.ToTensor())
+        dataset = MNIST(
+            DATASETS_PATH, train=True, download=True, transform=transforms.ToTensor()
+        )
+        self.mnist_test = MNIST(
+            DATASETS_PATH, train=False, download=True, transform=transforms.ToTensor()
+        )
         self.mnist_train, self.mnist_val = random_split(dataset, [55000, 5000])
         self.batch_size = batch_size
 
