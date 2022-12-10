@@ -327,3 +327,6 @@ stable-diffusion/
 assests/
 src/
 stablediffusion/
+Datasets/
+data/
+02 lightning work/
