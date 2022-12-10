@@ -26,9 +26,9 @@ class TaskManager(L.LightningFlow):
     def run(self):
         print('hello')
         self.task1_work.run()
-        # self.task1_work.stop()
-        if self.task1_work.has_stopped:
+        if self.task1_work.has_succeeded:
             print("stopped")
+            self.task1_work.stop()
 
 component = TaskManager()
 app = L.LightningApp(component)
