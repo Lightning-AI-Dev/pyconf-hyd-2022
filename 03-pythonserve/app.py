@@ -20,7 +20,7 @@ class SDServe(PythonServer):
         super().__init__(input_type=Prompt, output_type=Image, **kwargs)
         self.sd_variant = sd_variant
 
-    def serialize(image):
+    def serialize(self, image):
         buffered = io.BytesIO()
         image.save(buffered, format="PNG")
         return base64.b64encode(buffered.getvalue()).decode("utf-8")
